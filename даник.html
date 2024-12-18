@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZOO-Магазин</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s;
+        }
+
+        header {
+            background-color: #8030a4;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: #333;
+        }
+
+        nav a {
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            background-color: #552929;
+        }
+
+        .container {
+            padding: 20px;
+            display: none;
+        }
+
+        .container.active {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .product {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 200px;
+            transition: transform 0.3s ease;
+        }
+
+        .product:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .product img {
+            max-width: 100%;
+            height: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .product:hover img {
+            transform: scale(1.1);
+        }
+
+        .footer {
+            background-color: #000000;
+            color: white;
+            text-align: center;
+            padding: 10px 20px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .cart-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            text-align: left;
+            width: 100px;
+        }
+
+        .cart-item img {
+            max-width: 50%;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        .cart-item button {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 5px;
+            cursor: pointer;
+        }
+
+        .cart-item button:hover {
+            background: #d32f2f;
+        }
+
+        .back-button {
+            margin-top: 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px;
+            cursor: pointer;
+            width: 100%; 
+            max-width: 200px; 
+            text-align: center;
+        }
+
+        .back-button:hover {
+            background: #45a049;
+        }
+
+        .search-container {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        #searchInput {
+            padding: 8px;
+            width: 200px;
+            font-size: 14px;
+        }
+
+        .filter-container {
+            margin-bottom: 20px;
+        }
+
+        .filter-container select, .filter-container button {
+            padding: 8px;
+            margin-right: 10px;
+        }
+
+        .product-rating {
+            margin-top: 10px;
+            color: #ff9900;
+        }
+
+        .dark-theme {
+            background-color: #121212;
+            color: white;
+        }
+
+        .dark-theme header {
+            background-color: #222;
+        }
+
+        .dark-theme nav {
+            background-color: #444;
+        }
+
+        .dark-theme .footer {
+            background-color: #222;
+        }
+
+        #cartPage {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Добро пожаловать в ZOO-Магазин!</h1>
+    </header>
+    <nav>
+        <a href="#" id="catalogButton">Каталог</a>
+        <a href="#" id="cartButton">Корзина</a>
+        <a href="#" id="contactButton">Контакты</a>
+        <a href="#" id="themeButton">Переключить тему</a>
+        <a href="#" id="aboutButton">О нас</a>
+    </nav>
+    <div id="catalogPage" class="container active">
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Поиск товаров..." oninput="searchCatalog()">
+            <div class="filter-container">
+                <select id="categoryFilter" onchange="filterCategory()">
+                    <option value="">Все категории</option>
+                    <option value="Собаки">Собаки</option>
+                    <option value="Кошки">Кошки</option>
+                    <option value="Птицы">Птицы</option>
+                </select>
+                <button onclick="sortByPrice()">Сортировать по цене</button>
+            </div>
+        </div>
+
+        <div class="product" data-category="Собаки">
+            <img src="https://via.placeholder.com/200" alt="Корм для собак">
+            <h2>Корм для собак</h2>
+            <p>Цена: 1200 руб.</p>
+            <button onclick="addToCart('Корм для собак', 1200, 'https://via.placeholder.com/200')">Добавить в корзину</button>
+            <div class="product-rating">⭐⭐⭐⭐⭐</div>
+        </div>
+        
+        <div class="product" data-category="Кошки">
+            <img src="https://via.placeholder.com/200" alt="Игрушка для котов">
+            <h2>Игрушка для котов</h2>
+            <p>Цена: 800 руб.</p>
+            <button onclick="addToCart('Игрушка для котов', 800, 'https://via.placeholder.com/200')">Добавить в корзину</button>
+            <div class="product-rating">⭐⭐⭐⭐</div>
+        </div>
+
+        <div class="product" data-category="Птицы">
+            <img src="https://via.placeholder.com/200" alt="Витамины для птиц">
+            <h2>Витамины для птиц</h2>
+            <p>Цена: 500 руб.</p>
+            <button onclick="addToCart('Витамины для птиц', 500, 'https://via.placeholder.com/200')">Добавить в корзину</button>
+            <div class="product-rating">⭐⭐⭐</div>
+        </div>
+    </div>
+
+    <div id="cartPage" class="container">
+        <h2>Корзина</h2>
+        <div id="cartItems"></div>
+        <button class="back-button" id="backToCatalog">Назад в каталог</button>
+    </div>
+
+    <div id="contactPage" class="container">
+        <h2>Контакты</h2>
+        <p>Адрес: Алматы, ул. Абая, д. 55</p>
+        <p>Тел: +7 (123) 456-78-90</p>
+        <p>Email: info@zoo-store.com</p>
+    </div>
+
+    <div id="aboutPage" class="container">
+        <h2>О нас</h2>
+        <p>Мы - зоомагазин, который предлагает товары для ваших питомцев. У нас широкий выбор кормов, игрушек и аксессуаров для животных.</p>
+    </div>
+
+    <footer class="footer">
+        <p>Контакты: info@zoo-store.com | Тел: +7 (123) 456-78-90</p>
+    </footer>
+
+    <script>
+        const cart = [];
+        const catalogPage = document.getElementById('catalogPage');
+        const cartPage = document.getElementById('cartPage');
+        const contactPage = document.getElementById('contactPage');
+        const aboutPage = document.getElementById('aboutPage');
+        const themeButton = document.getElementById('themeButton');
+        const catalogButton = document.getElementById('catalogButton');
+        const cartButton = document.getElementById('cartButton');
+        const contactButton = document.getElementById('contactButton');
+        const aboutButton = document.getElementById('aboutButton');
+        const backToCatalog = document.getElementById('backToCatalog');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const cartItemsDiv = document.getElementById('cartItems');
+
+        catalogButton.addEventListener('click', () => {
+            catalogPage.classList.add('active');
+            cartPage.classList.remove('active');
+            contactPage.classList.remove('active');
+            aboutPage.classList.remove('active');
+        });
+
+        cartButton.addEventListener('click', () => {
+            cartPage.classList.add('active');
+            catalogPage.classList.remove('active');
+            contactPage.classList.remove('active');
+            aboutPage.classList.remove('active');
+            renderCart();
+        });
+
+        contactButton.addEventListener('click', () => {
+            contactPage.classList.add('active');
+            catalogPage.classList.remove('active');
+            cartPage.classList.remove('active');
+            aboutPage.classList.remove('active');
+        });
+
+        aboutButton.addEventListener('click', () => {
+            aboutPage.classList.add('active');
+            catalogPage.classList.remove('active');
+            cartPage.classList.remove('active');
+            contactPage.classList.remove('active');
+        });
+
+        themeButton.addEventListener('click', () => {
+            document.body.classList.toggle('dark-theme');
+        });
+
+        function addToCart(name, price, imgUrl) {
+            cart.push({ name, price, imgUrl });
+            alert(`${name} добавлен в корзину!`);
+        }
+
+        function renderCart() {
+            cartItemsDiv.innerHTML = '';
+            if (cart.length === 0) {
+                cartItemsDiv.innerHTML = '<p>Корзина пуста.</p>';
+            } else {
+                cart.forEach(item => {
+                    const div = document.createElement('div');
+                    div.classList.add('cart-item');
+                    div.innerHTML = `
+                        <img src="${item.imgUrl}" alt="${item.name}">
+                        <h3>${item.name}</h3>
+                        <p>Цена: ${item.price} руб.</p>
+                        <button onclick="removeFromCart('${item.name}')">Удалить</button>
+                    `;
+                    cartItemsDiv.appendChild(div);
+                });
+            }
+        }
+
+        function removeFromCart(itemName) {
+            const index = cart.findIndex(item => item.name === itemName);
+            if (index !== -1) {
+                cart.splice(index, 1);
+                renderCart();
+            }
+        }
+
+        backToCatalog.addEventListener('click', () => {
+            cartPage.classList.remove('active');
+            catalogPage.classList.add('active');
+        });
+
+        // Фильтрация товаров по категории
+        function filterCategory() {
+            const selectedCategory = categoryFilter.value;
+            const products = document.querySelectorAll('.product');
+            products.forEach(product => {
+                const productCategory = product.getAttribute('data-category');
+                if (selectedCategory === '' || productCategory === selectedCategory) {
+                    product.style.display = 'block';
+                } else {
+                    product.style.display = 'none';
+                }
+            });
+        }
+
+        // Сортировка товаров по цене
+        function sortByPrice() {
+            const products = Array.from(document.querySelectorAll('.product'));
+            products.sort((a, b) => {
+                const priceA = parseInt(a.querySelector('p').innerText.replace(/\D/g, ''));
+                const priceB = parseInt(b.querySelector('p').innerText.replace(/\D/g, ''));
+                return priceA - priceB;
+            });
+            const catalog = document.getElementById('catalogPage');
+            products.forEach(product => {
+                catalog.appendChild(product); // Перемещаем элементы в новый порядок
+            });
+        }
+
+        function searchCatalog() {
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            const products = document.querySelectorAll('.product');
+            products.forEach(product => {
+                const productName = product.querySelector('h2').innerText.toLowerCase();
+                if (productName.includes(searchInput)) {
+                    product.style.display = 'block';
+                } else {
+                    product.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
